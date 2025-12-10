@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nimex Terminals | Operational Excellence in Energy Logistics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark light;
+      --navy: #07152c;
+      --mid-navy: #0b254e;
+      --accent: #2ad6ff;
+      --accent-soft: rgba(42, 214, 255, 0.1);
+      --white: #f9fbff;
+      --text: #e7ecf6;
+      --muted: #9fb2ce;
+      --logo-mark: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%25%27%20stop-color%3D%27%230b2c5a%27/%3E%3Cstop%20offset%3D%27100%25%27%20stop-color%3D%27%231f5fa8%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath%20fill%3D%27url(%23g)%27%20d%3D%27M50%205C35%2025%2022%2045%2022%2060c0%2015%2012.5%2027%2028%2027s28-12%2028-27C78%2045%2065%2025%2050%205z%27/%3E%3Ccircle%20cx%3D%2750%27%20cy%3D%2760%27%20r%3D%2714%27%20fill%3D%27%23f5a623%27/%3E%3Ccircle%20cx%3D%2750%27%20cy%3D%2760%27%20r%3D%2710%27%20fill%3D%27%23fefefe%27/%3E%3C/svg%3E");
+      --logo-cursor: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%25%27%20stop-color%3D%27%230b2c5a%27/%3E%3Cstop%20offset%3D%27100%25%27%20stop-color%3D%27%231f5fa8%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath%20fill%3D%27url(%23g)%27%20d%3D%27M50%205C35%2025%2022%2045%2022%2060c0%2015%2012.5%2027%2028%2027s28-12%2028-27C78%2045%2065%2025%2050%205z%27/%3E%3Ccircle%20cx%3D%2750%27%20cy%3D%2760%27%20r%3D%2714%27%20fill%3D%27%23f5a623%27/%3E%3Ccircle%20cx%3D%2750%27%20cy%3D%2760%27%20r%3D%2710%27%20fill%3D%27%23fefefe%27/%3E%3C/svg%3E") 16 16, auto;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Outfit", Arial, sans-serif;
+      background: radial-gradient(circle at top, rgba(255,255,255,0.12), transparent 55%),
+                  #08142b;
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+      cursor: var(--logo-cursor);
+    }
+
+    a, button, input, textarea, select {
+      cursor: var(--logo-cursor);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: linear-gradient(120deg, #03142c, #0a1f3f, #03142c);
+      background-size: 300% 300%;
+      animation: backgroundShift 18s ease infinite;
+    }
+
+    .background-video {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: -2;
+    }
+
+    .background-video video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.75) contrast(1.05) saturate(1.1);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(135deg, rgba(5,12,28,0.65) 0%, rgba(4,18,36,0.55) 35%, rgba(7,24,52,0.45) 100%);
+    }
+
+    .bubble-layer {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .bubble {
+      position: absolute;
+      bottom: -120px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.35), rgba(42,214,255,0.12));
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      animation: bubbleRise 24s linear infinite;
+      opacity: 0;
+    }
+
+    .bubble:nth-child(1) {
+      width: 80px;
+      height: 80px;
+      left: 12%;
+      animation-delay: 0s;
+      animation-duration: 20s;
+    }
+
+    .bubble:nth-child(2) {
+      width: 120px;
+      height: 120px;
+      left: 28%;
+      animation-delay: 4s;
+    }
+
+    .bubble:nth-child(3) {
+      width: 60px;
+      height: 60px;
+      left: 45%;
+      animation-delay: 2s;
+      animation-duration: 18s;
+    }
+
+    .bubble:nth-child(4) {
+      width: 140px;
+      height: 140px;
+      left: 62%;
+      animation-delay: 6s;
+      animation-duration: 26s;
+    }
+
+    .bubble:nth-child(5) {
+      width: 90px;
+      height: 90px;
+      left: 78%;
+      animation-delay: 1s;
+      animation-duration: 22s;
+    }
+
+    .bubble:nth-child(6) {
+      width: 50px;
+      height: 50px;
+      left: 5%;
+      animation-delay: 8s;
+      animation-duration: 16s;
+    }
+
+    .bubble:nth-child(7) {
+      width: 70px;
+      height: 70px;
+      left: 88%;
+      animation-delay: 10s;
+      animation-duration: 19s;
+    }
+
+    .bubble:nth-child(8) {
+      width: 110px;
+      height: 110px;
+      left: 35%;
+      animation-delay: 12s;
+      animation-duration: 25s;
+    }
+
+    @keyframes bubbleRise {
+      0% {
+        transform: translateY(0) scale(0.9);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(-120vh) scale(1.25);
+        opacity: 0;
+      }
+    }
+
+    @keyframes backgroundShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+      background: rgba(3, 8, 20, 0.8);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.35rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--white);
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      object-fit: contain;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+      background: rgba(0,0,0,0.2);
+      padding: 4px;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.25rem;
+      font-size: 0.95rem;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 5rem 1.5rem 4rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 4vw, 3.5rem);
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      color: var(--muted);
+      margin-bottom: 1.8rem;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 440px;
+      border-radius: 24px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(42,214,255,0.2), rgba(9,46,94,0.9));
+    }
+
+    .slideshow {
+      position: absolute;
+      inset: 0;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.9;
+      filter: saturate(1.05);
+      display: block;
+    }
+
+    .slide.is-active {
+      opacity: 1;
+      z-index: 1;
+    }
+
+    .floating-badge {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(3, 8, 20, 0.8);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 1rem 1.2rem;
+      border-radius: 14px;
+      font-size: 0.9rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .badge-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(42,214,255,0.12);
+      flex-shrink: 0;
+    }
+
+    .slider-dots {
+      position: absolute;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 2;
+    }
+
+    .slider-dots button {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.6);
+      background: rgba(0,0,0,0.35);
+      cursor: var(--logo-cursor);
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+      padding: 0;
+    }
+
+    .slider-dots button.active {
+      transform: scale(1.15);
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(42,214,255,0.4);
+    }
+
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem;
+    }
+
+    .section h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      align-items: center;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+
+    .card {
+      background: rgba(4, 12, 26, 0.75);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 18px;
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(42,214,255,0.12), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover::after {
+      opacity: 1;
+    }
+
+    .image-block {
+      border-radius: 18px;
+      overflow: hidden;
+      min-height: 320px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    }
+
+    .image-block img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .subheading {
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.75rem;
+      color: var(--accent);
+      margin-bottom: 0.3rem;
+    }
+
+    .values-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .value-pill {
+      padding: 0.6rem 1.1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(7, 21, 44, 0.7);
+      font-size: 0.9rem;
+      color: var(--white);
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2.5rem 1.5rem 3rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 640px) {
+      nav ul {
+        display: none;
+      }
+      .hero {
+        padding-top: 4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-video">
+    <video autoplay muted loop playsinline poster="https://media.gettyimages.com/id/1415338392/video/aerial-view-container-ship-sailing-on-sea-to-stock-video-footage.jpg">
+      <source src="https://www.shutterstock.com/shutterstock/videos/3815102575/preview/stock-footage-aerial-top-view-lng-tanker-ship-liquified-natural-gas-with-contrail-in-the-ocean-sea-ship.webm">
+    </video>
+  </div>
+
+  <div class="bubble-layer">
+    <span class="bubble"></span>
+    <span class="bubble"></span>
+    <span class="bubble"></span>
+    <span class="bubble"></span>
+    <span class="bubble"></span>
+    <span class="bubble"></span>
+    <span class="bubble"></span>
+    <span class="bubble"></span>
+  </div>
+
+  <header>
+    <nav>
+      <div class="brand">
+        <img class="brand-logo" src="Nimex Terminals Logo.jpg" alt="Nimex Terminals logo" />
+        <span class="brand-name">Nimex Terminals</span>
+      </div>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#values">Core Values</a></li>
+        <li><a href="#vision">Vision & Mission</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#partners">Partners</a></li>
+        <li><a href="https://www.reuters.com/business/energy/ad-ports-signs-8-billion-deal-with-nimex-build-uaes-first-private-lng-lpg-2025-11-04/" target="_blank" rel="noopener noreferrer">News</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <p class="subheading">Operational Excellence in Energy Logistics</p>
+        <h1>KHALIFA PORT LPG & LNG STORAGE SOLUTIONS</h1>
+        <p>
+          Nimex Terminals Limited blends deep petroleum expertise with cutting-edge logistics to deliver safe, efficient, and high-capacity storage solutions at Khalifa Port. We orchestrate seamless energy supply chains for the Middle East and beyond.
+        </p>
+        <div class="values-list">
+          <span class="value-pill">LNG & LPG Storage</span>
+          <span class="value-pill">Regasification</span>
+          <span class="value-pill">Bottling & Loading</span>
+          <span class="value-pill">Global Connectivity</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="slideshow" aria-label="Project highlights">
+          <div class="slide is-active">
+            <img src="https://media.licdn.com/dms/image/v2/D4E22AQHRqhm3ONKqwA/feedshare-shrink_800/B4EZqhdBgEJgAg-/0/1763645332913?e=1766620800&v=beta&t=mChryPnGH0mrEEzB6uE4H96Sbdci8JDTvjaESC02wqA" alt="Terminal rendering 1" />
+          </div>
+          <div class="slide">
+            <img src="https://media.licdn.com/dms/image/v2/D4D22AQGGCcwvsob_EQ/feedshare-shrink_800/B4DZqLxLS3GgAg-/0/1763281516415?e=1766620800&v=beta&t=BQtlm4i8V3iirxT6_VyrC4Vx4DcsMATM6km1yCZoeXY" alt="Terminal rendering 2" />
+          </div>
+          <div class="slide">
+            <img src="https://media.licdn.com/dms/image/v2/D4D22AQHglQTzSjdfkA/feedshare-shrink_800/B4DZpOuHgwGwAg-/0/1762257306587?e=1766620800&v=beta&t=CdcB_5i-H7XkWbQVhTnuMdmBke-h0wwdBc-ef2NUv5U" alt="Terminal rendering 3" />
+          </div>
+          <div class="slider-dots" aria-label="Slide selector">
+            <button class="active" aria-label="Show slide 1"></button>
+            <button aria-label="Show slide 2"></button>
+            <button aria-label="Show slide 3"></button>
+          </div>
+        </div>
+        <div class="floating-badge">
+          <span class="badge-dot" aria-hidden="true"></span>
+          <div>
+            <div style="color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">Live Gallery</div>
+            <div style="font-weight: 600; color: var(--white);">Project Highlights</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <div class="grid grid-2">
+        <div class="card">
+          <p class="subheading">About Us</p>
+          <h2>Nimex Terminals — Abu Dhabi’s Gateway to the Future of Energy</h2>
+          <p>
+            Nimex Terminals — based in Abu Dhabi, we are pioneering LNG & LPG storage, handling, and shipment infrastructure that drives the UAE’s energy vision. Our world-class terminals deliver safe, efficient, and high-capacity storage, regasification, bottling, and loading/unloading operations, ensuring seamless energy supply chains and connecting the region to global markets. Through innovation, strategic partnerships, and operational excellence, Nimex Terminals is shaping the future of LNG & LPG terminal operations, logistics, and distribution across the Middle East and beyond.
+          </p>
+        </div>
+        <div class="image-block">
+          <img src="https://assets.superhivemarket.com/cache/3a262e0a3ae0bc989c002ffeb1400cb0.gif" />
+        </div>
+      </div>
+    </section>
+
+    <section id="values" class="section">
+      <p class="subheading">Core Values</p>
+      <h2>Foundations That Power Every Operation</h2>
+      <div class="grid grid-3">
+        <div class="card">
+          <h3>Safety & Care for the Environment</h3>
+          <p>Rigorous HSE programs, predictive monitoring, and zero-compromise protocols safeguard our workforce, assets, and ecosystems.</p>
+        </div>
+        <div class="card">
+          <h3>Reliability & Operational Excellence</h3>
+          <p>Redundant systems, best-in-class equipment, and disciplined maintenance ensure the LNG/LPG flow never stops.</p>
+        </div>
+        <div class="card">
+          <h3>Sustainability & Innovation</h3>
+          <p>Cleaner energy pathways, digital twins, and energy-efficient infrastructure reduce emissions while boosting performance.</p>
+        </div>
+        <div class="card">
+          <h3>Integrity & Compliance</h3>
+          <p>Transparent governance, traceable operations, and global certifications build trust across every partnership.</p>
+        </div>
+        <div class="card">
+          <h3>Growth Mindset</h3>
+          <p>Strategic investments, talent development, and agile expansion plans keep Nimex ahead of regional demand.</p>
+        </div>
+        <div class="card">
+          <h3>Safety Leadership</h3>
+          <p>We champion cultural ownership of safety, empowering teams to elevate standards across terminals.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid grid-2">
+        <div class="image-block">
+          <img src="https://www.australianterminals.com/wp-content/uploads/2024/01/shutterstock_1780885814-1.jpg" alt="Terminal operations" />
+        </div>
+        <div class="card">
+          <p class="subheading">Operational Excellence</p>
+          <h2>Operational Excellence in Energy Logistics</h2>
+          <p>
+            Nimex Terminals Limited combines deep expertise in handling petroleum products with a focus on operational excellence and efficiency. We ensure seamless logistics and storage solutions for LPG and LNG at Khalifa Port, supporting reliable energy supply chains.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="vision" class="section">
+      <div class="grid grid-2">
+        <div class="card">
+          <p class="subheading">Vision</p>
+          <h2>Connecting the Middle East to the World’s Energy Demand</h2>
+          <p>
+            Create the safest, smartest LNG & LPG terminal ecosystem in the Gulf, setting the benchmark for resilience, sustainability, and customer trust.
+          </p>
+        </div>
+        <div class="card">
+          <p class="subheading">Mission</p>
+          <h2>Empowering Supply Chains with Precision & Speed</h2>
+          <p>
+            Design, operate, and scale world-class storage and logistics assets powered by data, automation, and strategic partnerships.
+          </p>
+        </div>
+      </div>
+      <div class="image-block" style="margin-top:1.5rem;">
+        <img src="https://tideworks.com/wp-content/uploads/2024/05/Image1-1.jpg" alt="Visionary infrastructure" />
+      </div>
+    </section>
+
+    <section id="projects" class="section">
+      <p class="subheading">Project View</p>
+      <h2>Strategic Developments Across the UAE</h2>
+      <div class="grid grid-3">
+        <div class="card">
+          <h3>Khalifa Port Mega Terminal</h3>
+          <p>Integrated LNG/LPG storage with regasification, bottling, and automation-ready loading bays.</p>
+        </div>
+        <div class="card">
+          <h3>Desert Pipeline Corridor</h3>
+          <p>Connecting inland demand centers through intelligent pumping stations and digital monitoring.</p>
+        </div>
+        <div class="card">
+          <h3>Floating Storage Expansion</h3>
+          <p>Hybrid offshore storage solutions ensuring inventory agility during peak seasonal demand.</p>
+        </div>
+      </div>
+      <div class="image-block" style="margin-top:1.5rem;">
+        <img src="https://images.unsplash.com/photo-1759611325490-1e05282fbedb?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Project visualization" />
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="subheading">Key Terminals</p>
+      <h2>High-Capacity Nodes Powering Regional Trade</h2>
+      <div class="grid grid-3">
+        <div class="card">
+          <h3>Khalifa Port LNG</h3>
+          <p>Central hub with automated berth scheduling, 24/7 control center, and rapid vapor recovery.</p>
+        </div>
+        <div class="card">
+          <h3>Shah LPG Complex</h3>
+          <p>Specialized LPG storage caverns with advanced safety interlocks and IoT-enabled maintenance.</p>
+        </div>
+        <div class="card">
+          <h3>Eastern Offshore Hub</h3>
+          <p>Floating storage and regas units (FSRUs) delivering flexible capacity for global cargo routing.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="subheading">Strategic Advantages</p>
+      <h2>Why Energy Leaders Choose Nimex</h2>
+      <div class="grid grid-3">
+        <div class="card">
+          <h3>Location Advantage</h3>
+          <p>Prime positioning at Abu Dhabi’s maritime crossroads connects Europe, Asia, and Africa.</p>
+        </div>
+        <div class="card">
+          <h3>Digital Command</h3>
+          <p>AI-enabled dashboards monitor throughput, safety, and emissions in real time.</p>
+        </div>
+        <div class="card">
+          <h3>Partnership Network</h3>
+          <p>Collaboration with technology providers, EPCs, and logistics firms accelerates growth.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="partners" class="section">
+      <p class="subheading">Partners with us today</p>
+      <h2>Trusted Allies in Energy Transformation</h2>
+      <div class="gallery">
+        <img src="https://gas-stroy.com/wp-content/uploads/2020/09/LPG-LNG-2.jpg" alt="Partner collaboration" />
+        <img src="https://justenergy.com/wp-content/uploads/2022/04/liquefied-natural-gas-lng-gas-on-oceanliner-in-transit.jpg" alt="Engineering partner" />
+        <img src="https://www.jereh-engineering.com/upload/images/2020/12/09/8a1754ef03cc432992d2ddcec0686b20.jpg" alt="Logistics partner" />
+        <img src="https://www.idsmgroup.com/wp-content/uploads/2023/04/LNG-and-LPG.jpg" alt="Technology partner" />
+      </div>
+      <p style="margin-top:1.5rem; color:var(--muted);">
+        Strategic partnerships with EPC leaders, marine logistics providers, and advanced analytics firms enable Nimex Terminals to deliver end-to-end LNG & LPG solutions with unmatched safety and speed.
+      </p>
+    </section>
+
+    <section id="contact" class="section">
+      <p class="subheading">Contact Us</p>
+      <h2>Let's Plan Your Next LNG & LPG Move</h2>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>Reach Our Teams</h3>
+          <p>Nimex Terminals experts are available to scope storage, regasification, and logistics programs tailored to your portfolio.</p>
+          <div style="margin-top:1.25rem; display:flex; flex-direction:column; gap:0.6rem; color:var(--muted);">
+            <div><strong style="color:var(--white);">Email:</strong> info@nimex-holding.com</div>
+            <div><strong style="color:var(--white);">Phone:</strong> +971 4 553 5442</div>
+            <div><strong style="color:var(--white);">Location:</strong> Khalifa Port, Abu Dhabi, UAE</div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>How We Support You</h3>
+          <ul style="list-style: none; padding: 0; margin: 0; color: var(--muted); display:flex; flex-direction:column; gap:0.4rem;">
+            <li>• Terminal access planning & berthing</li>
+            <li>• Storage, bottling, and regas scheduling</li>
+            <li>• LNG/LPG logistics engineering</li>
+            <li>• Safety, compliance, and sustainability programs</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © <span id="year"></span> Nimex Terminals Limited — Abu Dhabi, UAE
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Lightweight slideshow for the hero gallery
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const dots = Array.from(document.querySelectorAll('.slider-dots button'));
+    let activeIndex = 0;
+    let slideTimer;
+
+    const showSlide = (nextIndex) => {
+      slides[activeIndex]?.classList.remove('is-active');
+      dots[activeIndex]?.classList.remove('active');
+
+      activeIndex = (nextIndex + slides.length) % slides.length;
+
+      slides[activeIndex]?.classList.add('is-active');
+      dots[activeIndex]?.classList.add('active');
+    };
+
+    const restartTimer = () => {
+      clearInterval(slideTimer);
+      slideTimer = setInterval(() => showSlide(activeIndex + 1), 5200);
+    };
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        showSlide(index);
+        restartTimer();
+      });
+    });
+
+    if (slides.length > 1) {
+      restartTimer();
+    }
+  </script>
+</body>
+</html>
