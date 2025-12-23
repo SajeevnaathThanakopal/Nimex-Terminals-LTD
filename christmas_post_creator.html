@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christmas LinkedIn Post Creator - Nimex Terminals</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .upload-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .upload-box {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+        
+        .upload-box:hover {
+            border-color: #764ba2;
+            background: #f0f0f0;
+        }
+        
+        .upload-box.dragover {
+            border-color: #764ba2;
+            background: #e8e8e8;
+        }
+        
+        .upload-box label {
+            display: block;
+            cursor: pointer;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .upload-box input[type="file"] {
+            display: none;
+        }
+        
+        .preview {
+            margin-top: 15px;
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .controls {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .control-group input[type="range"] {
+            width: 100%;
+        }
+        
+        .control-group input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-right: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .canvas-container {
+            margin-top: 30px;
+            text-align: center;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        #outputCanvas {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎄 Christmas LinkedIn Post Creator</h1>
+        <p class="subtitle">Create a professional LinkedIn post for Nimex Terminals</p>
+        
+        <div class="upload-section">
+            <div class="upload-box" id="christmasBox">
+                <label for="christmasImage">Upload Christmas Image</label>
+                <input type="file" id="christmasImage" accept="image/*">
+                <img id="christmasPreview" class="preview" style="display:none;">
+            </div>
+            
+            <div class="upload-box" id="logoBox">
+                <label for="logoImage">Upload Nimex Logo</label>
+                <input type="file" id="logoImage" accept="image/*">
+                <img id="logoPreview" class="preview" style="display:none;">
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>Text Position (Y coordinate): <span id="textYValue">600</span></label>
+                <input type="range" id="textY" min="400" max="800" value="600">
+            </div>
+            <div class="control-group">
+                <label>Text to Remove (if visible):</label>
+                <input type="text" id="textToRemove" value="and happy newyear" placeholder="Text to remove from image">
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <button onclick="processImage()">Create LinkedIn Post</button>
+            <button onclick="downloadImage()" id="downloadBtn" style="display:none;">Download PNG</button>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="outputCanvas"></canvas>
+        </div>
+        
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        let christmasImg = null;
+        let logoImg = null;
+        let outputCanvas = null;
+        let ctx = null;
+        
+        // LinkedIn post dimensions
+        const LINKEDIN_WIDTH = 1200;
+        const LINKEDIN_HEIGHT = 627;
+        
+        // Initialize canvas
+        window.onload = function() {
+            outputCanvas = document.getElementById('outputCanvas');
+            outputCanvas.width = LINKEDIN_WIDTH;
+            outputCanvas.height = LINKEDIN_HEIGHT;
+            ctx = outputCanvas.getContext('2d');
+            
+            // Set up file inputs
+            document.getElementById('christmasImage').addEventListener('change', handleChristmasUpload);
+            document.getElementById('logoImage').addEventListener('change', handleLogoUpload);
+            
+            // Set up drag and drop
+            setupDragAndDrop('christmasBox', handleChristmasUpload);
+            setupDragAndDrop('logoBox', handleLogoUpload);
+            
+            // Text position slider
+            document.getElementById('textY').addEventListener('input', function(e) {
+                document.getElementById('textYValue').textContent = e.target.value;
+            });
+        };
+        
+        function setupDragAndDrop(boxId, handler) {
+            const box = document.getElementById(boxId);
+            box.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                box.classList.add('dragover');
+            });
+            box.addEventListener('dragleave', () => {
+                box.classList.remove('dragover');
+            });
+            box.addEventListener('drop', (e) => {
+                e.preventDefault();
+                box.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].type.startsWith('image/')) {
+                    const input = box.querySelector('input[type="file"]');
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(files[0]);
+                    input.files = dataTransfer.files;
+                    handler({target: input});
+                }
+            });
+        }
+        
+        function handleChristmasUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    christmasImg = new Image();
+                    christmasImg.onload = function() {
+                        document.getElementById('christmasPreview').src = event.target.result;
+                        document.getElementById('christmasPreview').style.display = 'block';
+                    };
+                    christmasImg.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function handleLogoUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    logoImg = new Image();
+                    logoImg.onload = function() {
+                        document.getElementById('logoPreview').src = event.target.result;
+                        document.getElementById('logoPreview').style.display = 'block';
+                    };
+                    logoImg.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function removeTextFromImage(img, textToRemove) {
+            // Create a temporary canvas to work with the image
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = img.width;
+            tempCanvas.height = img.height;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.drawImage(img, 0, 0);
+            
+            // Get image data
+            const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+            const data = imageData.data;
+            
+            // Simple approach: remove text from bottom area
+            // In a real scenario, you'd use OCR to find exact text location
+            const textAreaHeight = Math.floor(tempCanvas.height * 0.12);
+            const textAreaY = tempCanvas.height - textAreaHeight - 30;
+            
+            // Sample background color from above the text area
+            let samplePixels = [];
+            const sampleHeight = Math.max(0, textAreaY - 50);
+            for (let y = sampleHeight; y < textAreaY; y++) {
+                for (let x = 0; x < tempCanvas.width; x += 10) {
+                    const idx = (y * tempCanvas.width + x) * 4;
+                    samplePixels.push([data[idx], data[idx + 1], data[idx + 2]]);
+                }
+            }
+            
+            // Calculate average background color
+            let avgR = 0, avgG = 0, avgB = 0;
+            samplePixels.forEach(pixel => {
+                avgR += pixel[0];
+                avgG += pixel[1];
+                avgB += pixel[2];
+            });
+            const count = samplePixels.length;
+            avgR = Math.floor(avgR / count);
+            avgG = Math.floor(avgG / count);
+            avgB = Math.floor(avgB / count);
+            
+            // Fill text area with background color
+            for (let y = textAreaY; y < tempCanvas.height; y++) {
+                for (let x = 0; x < tempCanvas.width; x++) {
+                    const idx = (y * tempCanvas.width + x) * 4;
+                    // Create gradient for smoother transition
+                    const alpha = (y - textAreaY) / textAreaHeight;
+                    data[idx] = avgR;
+                    data[idx + 1] = avgG;
+                    data[idx + 2] = avgB;
+                }
+            }
+            
+            tempCtx.putImageData(imageData, 0, 0);
+            
+            // Create new image from canvas
+            const cleanedImg = new Image();
+            cleanedImg.src = tempCanvas.toDataURL();
+            return cleanedImg;
+        }
+        
+        function processImage() {
+            if (!christmasImg) {
+                showStatus('Please upload a Christmas image first!', 'error');
+                return;
+            }
+            
+            showStatus('Processing image...', 'success');
+            
+            // Wait for image to be ready
+            setTimeout(() => {
+                // Clear canvas
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, LINKEDIN_WIDTH, LINKEDIN_HEIGHT);
+                
+                // Remove text from Christmas image
+                const cleanedImg = removeTextFromImage(christmasImg, document.getElementById('textToRemove').value);
+                
+                cleanedImg.onload = function() {
+                    // Calculate scaling to fit LinkedIn dimensions
+                    const scale = Math.min(
+                        LINKEDIN_WIDTH / cleanedImg.width,
+                        LINKEDIN_HEIGHT / cleanedImg.height
+                    );
+                    const scaledWidth = cleanedImg.width * scale;
+                    const scaledHeight = cleanedImg.height * scale;
+                    const x = (LINKEDIN_WIDTH - scaledWidth) / 2;
+                    const y = (LINKEDIN_HEIGHT - scaledHeight) / 2;
+                    
+                    // Draw Christmas image
+                    ctx.drawImage(cleanedImg, x, y, scaledWidth, scaledHeight);
+                    
+                    // Add logo if available
+                    if (logoImg) {
+                        logoImg.onload = function() {
+                            const logoSize = LINKEDIN_WIDTH * 0.15;
+                            const logoHeight = logoSize * (logoImg.height / logoImg.width);
+                            const logoX = 40;
+                            const logoY = LINKEDIN_HEIGHT - logoHeight - 40;
+                            
+                            ctx.drawImage(logoImg, logoX, logoY, logoSize, logoHeight);
+                            
+                            // Add text below logo
+                            addText();
+                        };
+                        if (logoImg.complete) {
+                            logoImg.onload();
+                        }
+                    } else {
+                        // Add text without logo
+                        addText();
+                    }
+                };
+                
+                if (cleanedImg.complete) {
+                    cleanedImg.onload();
+                }
+            }, 100);
+        }
+        
+        function addText() {
+            const message = "May this christmas bring prosperity, love and success to your life";
+            const textY = parseInt(document.getElementById('textY').value);
+            
+            ctx.save();
+            
+            // Set font
+            ctx.font = 'bold 36px Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Draw text with outline
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 8;
+            ctx.strokeText(message, LINKEDIN_WIDTH / 2, textY);
+            
+            // Draw text fill
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillText(message, LINKEDIN_WIDTH / 2, textY);
+            
+            ctx.restore();
+            
+            document.getElementById('downloadBtn').style.display = 'inline-block';
+            showStatus('Image created successfully! Click Download PNG to save.', 'success');
+        }
+        
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.download = 'christmas_linkedin_post.png';
+            link.href = outputCanvas.toDataURL('image/png');
+            link.click();
+            showStatus('Download started!', 'success');
+        }
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+            status.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>
